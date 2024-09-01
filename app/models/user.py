@@ -24,7 +24,6 @@ class UserCreateModel(BaseModel):
     is_admin: bool
     
 class UserUpdateModel(BaseModel):
-    email: str
     first_name: str
     last_name:  Optional[str]
     is_active: bool

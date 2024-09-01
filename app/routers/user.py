@@ -11,7 +11,7 @@ from services.exception import ResourceNotFoundError
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-@router.get("", response_model=List[UserViewModel])
+@router.get("", response_model=List[UserViewModel], status_code=status.HTTP_200_OK)
 async def get_all_users(db: Session = Depends(get_db_context)):
     user = UserService.get_all_users(db)
     
@@ -20,7 +20,7 @@ async def get_all_users(db: Session = Depends(get_db_context)):
 
     return user
 
-@router.get("/search/{username}", response_model=List[UserViewModel])
+@router.get("/search/{username}", response_model=List[UserViewModel], status_code=status.HTTP_200_OK)
 async def get_users(username: str, db: Session = Depends(get_db_context)):
     user = UserService.get_users(username, db)
     
@@ -29,14 +29,14 @@ async def get_users(username: str, db: Session = Depends(get_db_context)):
 
     return user
 
-@router.post("/create", response_model=UserViewModel)
+@router.post("/create", response_model=UserViewModel, status_code=status.HTTP_201_CREATED)
 async def create_user(data: UserCreateModel, db: Session = Depends(get_db_context)):
     user = UserService.create_user(data, db)
     return user
 
-@router.put("/update", response_model=UserViewModel)
-async def update_user(data: UserUpdateModel, db: Session = Depends(get_db_context)):
-    user = UserService.update_user(data, db)
+@router.put("/update/{email}", response_model=UserViewModel, status_code=status.HTTP_200_OK)
+async def update_user(email, data: UserUpdateModel, db: Session = Depends(get_db_context)):
+    user = UserService.update_user(email, data, db)
     return user
     
 @router.delete("/delete/{email}", status_code=status.HTTP_204_NO_CONTENT)

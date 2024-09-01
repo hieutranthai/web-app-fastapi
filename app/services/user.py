@@ -39,8 +39,8 @@ def create_user(data: UserCreateModel, db: Session) -> User:
     
     return user
 
-def update_user(data: UserUpdateModel, db: Session) -> User:
-    user = get_user_by_email(data.email, db)
+def update_user(email, data: UserUpdateModel, db: Session) -> User:
+    user = get_user_by_email(email, db)
     
     if user is None:
         raise ResourceNotFoundError()

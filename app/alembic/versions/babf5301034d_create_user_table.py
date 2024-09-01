@@ -41,7 +41,7 @@ def upgrade() -> None:
         [
             {
                 "id": uuid4(),
-                "email": "mailto:admin@gmail.com",
+                "email": "admin@gmail.com",
                 "username": "admin",
                 "first_name": "admin",
                 "last_name": None,

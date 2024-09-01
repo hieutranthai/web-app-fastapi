@@ -6,7 +6,7 @@ from database import Base
 from .base_entity import BaseEntity
 
 class User(BaseEntity, Base):
-    _tablename_ = "user"
+    __tablename__ = "user"
     
     id = Column(UUID, primary_key=True, default=uuid.uuid4)
     email = Column(String, unique=True, nullable=False)
