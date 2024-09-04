@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 from passlib.context import CryptContext
 
-from services.exception import ResourceNotFoundError
+from services.exception import ResourceNotFoundError, ResourceExistedError
 from settings import JWT_SECRET, JWT_ALGORITHM
 from models.token import TokenData
 from schemas.user import User
@@ -28,6 +28,9 @@ def get_user_by_email(email, db: Session) -> User:
 
 def create_user(data: UserCreateModel, db: Session) -> User:
     user = User(**data.model_dump())
+    
+    if get_user_by_email(data.email, db) is not None:
+        raise ResourceExistedError()
 
     user.password = get_password_hash(data.password)
     user.created_at = datetime.now(timezone.utc)
@@ -47,6 +50,7 @@ def update_user(email, data: UserUpdateModel, db: Session) -> User:
     
     user.first_name = data.first_name
     user.last_name = data.last_name
+    user.updated_at = datetime.now(timezone.utc)
     
     db.commit()
     db.refresh(user)

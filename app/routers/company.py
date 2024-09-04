@@ -4,41 +4,41 @@ from starlette import status
 from sqlalchemy.orm import Session
 
 from database import get_db_context
-from services import user as UserService
-from models.user import UserUpdateModel, UserViewModel, UserSearchModel, UserCreateModel
-from schemas.user import User
+from services import company as CompanyService
+from models.company import CompanyUpdateModel, CompanyViewModel, CompanySearchModel, CompanyCreateModel
+from schemas.company import Company
 from services.exception import ResourceNotFoundError
 
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter(prefix="/company", tags=["Companies"])
 
-@router.get("", response_model=List[UserViewModel], status_code=status.HTTP_200_OK)
-async def get_all_users(db: Session = Depends(get_db_context)):
-    user = UserService.get_all_users(db)
+@router.get("", response_model=List[CompanyViewModel], status_code=status.HTTP_200_OK)
+async def get_all_companies(db: Session = Depends(get_db_context)):
+    company = CompanyService.get_all_companies(db)
     
-    if user is None:
+    if company is None:
         raise ResourceNotFoundError()
 
-    return user
+    return company
 
-@router.get("/search/{username}", response_model=List[UserViewModel], status_code=status.HTTP_200_OK)
-async def get_users(username: str, db: Session = Depends(get_db_context)):
-    user = UserService.get_users(username, db)
+@router.get("/search/{name}", response_model=List[CompanyViewModel], status_code=status.HTTP_200_OK)
+async def get_companies(name: str, db: Session = Depends(get_db_context)):
+    company = CompanyService.get_companies(name, db)
     
-    if user is None:
+    if company is None:
         raise ResourceNotFoundError()
 
-    return user
+    return company
 
-@router.post("/create", response_model=UserViewModel, status_code=status.HTTP_201_CREATED)
-async def create_user(data: UserCreateModel, db: Session = Depends(get_db_context)):
-    user = UserService.create_user(data, db)
-    return user
+@router.post("/create", response_model=CompanyViewModel, status_code=status.HTTP_201_CREATED)
+async def create_company(data: CompanyCreateModel, db: Session = Depends(get_db_context)):
+    company = CompanyService.create_company(data, db)
+    return company
 
-@router.put("/update/{email}", response_model=UserViewModel, status_code=status.HTTP_200_OK)
-async def update_user(email, data: UserUpdateModel, db: Session = Depends(get_db_context)):
-    user = UserService.update_user(email, data, db)
-    return user
+@router.put("/update/{name}", response_model=CompanyViewModel, status_code=status.HTTP_200_OK)
+async def update_company(name, data: CompanyUpdateModel, db: Session = Depends(get_db_context)):
+    company = CompanyService.update_company(name, data, db)
+    return company
     
-@router.delete("/delete/{email}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(email, db: Session = Depends(get_db_context)):
-    user = UserService.delete_user(email, db)
+@router.delete("/delete/{name}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_company(name, db: Session = Depends(get_db_context)):
+    company = CompanyService.delete_company(name, db)

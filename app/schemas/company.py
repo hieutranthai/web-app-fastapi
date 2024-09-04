@@ -5,7 +5,7 @@ from sqlalchemy.orm import DeclarativeBase
 from database import Base
 from .base_entity import BaseEntity
 
-class User(BaseEntity, Base):
+class Company(BaseEntity, Base):
     __tablename__ = "company"
     
     id = Column(UUID, primary_key=True, default=uuid.uuid4)

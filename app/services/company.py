@@ -1,17 +1,16 @@
-
 from typing import Annotated, List, Union
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, utils, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
-from services.exception import ResourceNotFoundError
-from schemas.user import Company
-from models.user import CompanyCreateModel, CompanyUpdateModel
+from services.exception import ResourceNotFoundError, ResourceExistedError
+from schemas.company import Company
+from models.company import CompanyCreateModel, CompanyUpdateModel
 
 
 def get_all_companies(db: Session) -> List[Company]:
-    return db.scalars(select(Company).order_by(Company.created_at)).all()
+    return db.scalars(select(Company).order_by(Company.name)).all()
 
 def get_companies(name, db: Session) -> List[Company]:
     return db.scalars(select(Company).filter(Company.name.like(f"%{name}%"))).all()
@@ -21,6 +20,9 @@ def get_company_by_name(name, db: Session) -> Company:
 
 def create_company(data: CompanyCreateModel, db: Session) -> Company:
     company = Company(**data.model_dump())
+    
+    if get_company_by_name(data.name, db) is not None:
+        raise ResourceExistedError()
 
     company.description = data.description
     company.mode = data.mode
@@ -34,7 +36,7 @@ def create_company(data: CompanyCreateModel, db: Session) -> Company:
     
     return company
 
-def update_copmany(name, data: CompanyUpdateModel, db: Session) -> Company:
+def update_company(name, data: CompanyUpdateModel, db: Session) -> Company:
     company = get_company_by_name(name, db)
     
     if company is None:
@@ -43,6 +45,7 @@ def update_copmany(name, data: CompanyUpdateModel, db: Session) -> Company:
     company.description = data.description
     company.mode = data.mode
     company.rating = data.rating
+    company.updated_at = datetime.now(timezone.utc)
     
     db.commit()
     db.refresh(company)
